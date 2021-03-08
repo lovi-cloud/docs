@@ -7,7 +7,7 @@
 
 ## Prepare
 
-- server of controller and hypervisor
+- A server of controller and hypervisor
     - e.g.) bare-metal, virtual-machine with vmx(Intel) or svm(AMD)
 
 - MySQL Server (recommend a version: > 8)
@@ -20,11 +20,16 @@ $ docker run -d -p 3306:3306 --restart always -e MYSQL_ROOT_PASSWORD="password" 
 
 ### Servers
 
-| Type | Name | IP Address |
-| --- | --- | --- |
-| controller (satelit, MySQL) | admin001 | 192.0.2.20 |
-| agent (teleskop) | hv001 | 192.0.2.100 |
-| iSCSI target | storage001 | 192.0.2.200 |
+| Type | Name | IP Address | distribution | 
+| --- | --- | --- | --- | 
+| controller (satelit, MySQL) | admin001 | 192.0.2.20 | Ubuntu focal |
+| agent (teleskop) | hv001 | 192.0.2.100 | Ubuntu focal |
+| iSCSI target | storage001 | 192.0.2.200 | Ubuntu focal |
+
+A distribution that we tested is here.
+
+- Ubuntu xenial (16.04)
+- Ubuntu focal (20.04)
 
 ## Install
 
@@ -82,7 +87,7 @@ $ sudo cat /etc/iscsi/initiatorname.iscsi
 ## If you change the InitiatorName, existing access control lists
 ## may reject this initiator.  The InitiatorName must be unique
 ## for each iSCSI initiator.  Do NOT duplicate iSCSI InitiatorNames.
-InitiatorName=iqn.1993-08.org.debian:01:contoller
+InitiatorName=iqn.1993-08.org.debian:01:admin001
 ```
 
 #### 2. Install apt packages
@@ -176,7 +181,7 @@ $ sudo cat /etc/iscsi/initiatorname.iscsi
 ## If you change the InitiatorName, existing access control lists
 ## may reject this initiator.  The InitiatorName must be unique
 ## for each iSCSI initiator.  Do NOT duplicate iSCSI InitiatorNames.
-InitiatorName=iqn.1993-08.org.debian:01:contoller
+InitiatorName=iqn.1993-08.org.debian:01:hv001
 ```
 
 #### 2. Install apt packages
@@ -192,7 +197,7 @@ $ sudo apt install qemu-system qemu-kvm qemu-utils bridge-utils ca-certificates 
 
 #### 3. Modify config of libvirtd
 
-teleskop connect libvirtd using tcp.
+teleskop connect to libvirtd using tcp.
 
 ```bash
 $ sudo cat /etc/libvirt/libvirtd.conf | grep -vE "^$|^#"
@@ -259,14 +264,14 @@ Mar 00 00:00:00 hv001 teleskop[15274]: listening on address 0.0.0.0:67
 ## Start Virtual-Machine
 
 satelit API implemented by [gRPC](https://grpc.io/).
-You can call gRPC, example a simple client is [here](https://github.com/lovi-cloud/satelit/tree/master/examples/client).
+You can call gRPC, a simple client is [here](https://github.com/lovi-cloud/satelit/tree/master/examples/client).
 
 ### Prepare
 
 - a simple client
   - `client` is binary of simple client
 - Image file in qcow2 for OS Image
-  - You can get an image of cirros (testing OS Image) in [OpenStack Docs](https://docs.openstack.org/image-guide/obtain-images.html).
+  - You can get an image of cirros (testing OS Image) in [GitHub Releases](https://github.com/cirros-dev/cirros/releases).
   
 e.g.)
 
@@ -311,3 +316,7 @@ $ sudo virsh list --all
 ```
 
 Gotcha!
+
+## More parameters
+
+please see: [terraform-provider-lovi](https://github.com/lovi-cloud/terraform-provider-lovi).
