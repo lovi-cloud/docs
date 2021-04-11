@@ -38,14 +38,14 @@ A distribution that we tested is here.
 #### 1. Install [OpenZFS](https://github.com/openzfs/zfs)
 
 ```bash
-$ sudo apt install zfsutils-linux
+user@storage001 $ sudo apt install zfsutils-linux
 ```
 
 #### 2. Create ZFS pool and dataset
 
 ```bash
-$ sudo zpool create tank
-$ sudo zfs create tank/targetd
+user@storage001 $ sudo zpool create tank
+user@storage001 $ sudo zfs create tank/targetd
 ```
 
 #### 3. Put targetd.yaml
@@ -53,7 +53,7 @@ $ sudo zfs create tank/targetd
 for example, please read the newest documents in [repository of targetd](https://github.com/open-iscsi/targetd#configuring-targetd) 
 
 ```bash
-$ cat /etc/target/targetd.yaml
+user@storage001 $ cat /etc/target/targetd.yaml
 user: "foo" # strings quoted, or not
 password: bar
 ssl: false
@@ -69,8 +69,8 @@ portal_addresses: ["0.0.0.0"]
 #### 4. Build and Run with Docker
 
 ```bash
-$ docker build -t targetd -f docker/Dockerfile.zfs .
-$ sudo docker run -d --net=host --privileged -v /etc/target:/etc/target -v /sys/kernel/config:/sys/kernel/config -v /lib/modules:/lib/modules -v /dev:/dev targetd
+user@storage001 $ docker build -t targetd -f docker/Dockerfile.zfs .
+user@storage001 $ sudo docker run -d --net=host --privileged -v /etc/target:/etc/target -v /sys/kernel/config:/sys/kernel/config -v /lib/modules:/lib/modules -v /dev:/dev targetd
 ```
 
 ### [satelit](https://github.com/lovi-cloud/satelit)
@@ -78,10 +78,10 @@ $ sudo docker run -d --net=host --privileged -v /etc/target:/etc/target -v /sys/
 #### 1. Generate initiator name for iSCSI
 
 ```bash
-$ sudo cat /etc/iscsi/initiatorname.iscsi
+user@admin001 $ sudo cat /etc/iscsi/initiatorname.iscsi
 GenerateName=yes
-$ sudo systemctl restart iscsid
-$ sudo cat /etc/iscsi/initiatorname.iscsi
+user@admin001 $ sudo systemctl restart iscsid
+user@admin001 $ sudo cat /etc/iscsi/initiatorname.iscsi
 ## DO NOT EDIT OR REMOVE THIS FILE!
 ## If you remove this file, the iSCSI daemon will not start.
 ## If you change the InitiatorName, existing access control lists
@@ -93,7 +93,7 @@ InitiatorName=iqn.1993-08.org.debian:01:admin001
 #### 2. Install apt packages
 
 ```bash
-$ apt install qemu-utils
+user@admin001 $ apt install qemu-utils
 ```
 
 #### 3. Put satelit.yaml
@@ -101,7 +101,7 @@ $ apt install qemu-utils
 please read the newest sample in [repository of satelit](https://github.com/lovi-cloud/satelit/blob/master/configs/satelit.yaml.sample).
 
 ```bash
-$ cat satelit.yaml
+user@admin001 $ cat satelit.yaml
 # config of listen ports
 api:
   listen: "0.0.0.0:9262"
@@ -131,7 +131,6 @@ targetd:
 
 # config of the log level
 log_level: "debug"
-
 ```
 
 #### 4. Create and apply datastore
@@ -139,6 +138,7 @@ log_level: "debug"
 Create database
 
 ```bash
+user@admin001 $ sudo mysql  # connect to MySQL in localhost
 mysql> CREATE DATABASE satelit;
 Query OK, 1 row affected (0.01 sec)
 ```
@@ -146,16 +146,16 @@ Query OK, 1 row affected (0.01 sec)
 apply `schema.sql`
 
 ```bash
-$ curl -L -0 https://raw.githubusercontent.com/lovi-cloud/satelit/master/internal/mysql/schema.sql
-$ cat schema.sql | sudo mysql -uroot -p
+user@admin001 $ curl -L -0 https://raw.githubusercontent.com/lovi-cloud/satelit/master/internal/mysql/schema.sql
+user@admin001 $ cat schema.sql | sudo mysql -uroot -p
 ```
 
 #### 5. Build satelit
 
 ```bash
-$ git clone https://github.com/lovi-cloud/satelit
-$ cd satelit
-$ make build-linux
+user@admin001 $ git clone https://github.com/lovi-cloud/satelit
+user@admin001 $ cd satelit
+user@admin001 $ make build-linux
 ```
 
 #### 6. Execute satelit
@@ -163,7 +163,7 @@ $ make build-linux
 `satelit revision` is commit hash of satelit when build
 
 ```bash
-$ ./satelit-linux-amd64 -conf satelit.yaml
+user@admin001 $ sudo ./satelit-linux-amd64 -conf satelit.yaml
 satelit revision: 4530d54
 ```
 
@@ -172,10 +172,10 @@ satelit revision: 4530d54
 #### 1. Generate initiator name for iSCSI
 
 ```bash
-$ sudo cat /etc/iscsi/initiatorname.iscsi
+user@hv001 $ sudo cat /etc/iscsi/initiatorname.iscsi
 GenerateName=yes
-$ sudo systemctl restart iscsid
-$ sudo cat /etc/iscsi/initiatorname.iscsi
+user@hv001 $ sudo systemctl restart iscsid
+user@hv001 $ sudo cat /etc/iscsi/initiatorname.iscsi
 ## DO NOT EDIT OR REMOVE THIS FILE!
 ## If you remove this file, the iSCSI daemon will not start.
 ## If you change the InitiatorName, existing access control lists
@@ -187,12 +187,10 @@ InitiatorName=iqn.1993-08.org.debian:01:hv001
 #### 2. Install apt packages
 
 ```bash
-$ curl "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x5edb1b62ec4926ea" | sudo apt-key add -
-$ sudo add-apt-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby
-main'
-$ sudo apt update
-
-$ sudo apt install qemu-system qemu-kvm qemu-utils bridge-utils ca-certificates libvirt-clients libvirt-daemon libvirt-daemon-system libvirt0
+user@hv001 $ curl "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x5edb1b62ec4926ea" | sudo apt-key add -
+user@hv001 $ sudo add-apt-repository 'deb http://ubuntu-cloud.archive.canonical.com/ubuntu focal-updates/wallaby main'
+user@hv001 $ sudo apt update
+user@hv001 $ sudo apt install qemu-system qemu-kvm qemu-utils bridge-utils ca-certificates libvirt-clients libvirt-daemon libvirt-daemon-system libvirt0
 ```
 
 #### 3. Modify config of libvirtd
@@ -200,7 +198,7 @@ $ sudo apt install qemu-system qemu-kvm qemu-utils bridge-utils ca-certificates 
 teleskop connect to libvirtd using tcp.
 
 ```bash
-$ sudo cat /etc/libvirt/libvirtd.conf | grep -vE "^$|^#"
+user@hv001 $ sudo cat /etc/libvirt/libvirtd.conf | grep -vE "^$|^#"
 listen_tls = 0
 listen_tcp = 1
 tcp_port = "16509"
@@ -213,13 +211,13 @@ auth_unix_rw = "none"
 auth_tcp = "none"
 auth_tls = "none"
 
-$ sudo vim /etc/systemd/system/multi-user.target.wants/libvirtd.service
+user@hv001 $ sudo vim /etc/systemd/system/multi-user.target.wants/libvirtd.service
 # Add Wants=libvirtd-tcp.socket
 Wants=libvirtd-ro.socket
 +Wants=libvirtd-tcp.socket
 Wants=libvirtd-admin.socket
 
-$ sudo systemctl restart libvirtd
+user@hv001 $ sudo systemctl restart libvirtd
 ```
 
 #### 4. Put teleskop
@@ -227,7 +225,7 @@ $ sudo systemctl restart libvirtd
 Put systemd unit file
 
 ```bash
-$ cat /etc/systemd/system/teleskop.service
+user@hv001 $ cat /etc/systemd/system/teleskop.service
 [Unit]
 Description=Teleskop Agent
 
@@ -238,22 +236,22 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-$ sudo systemctl daemon-reload
+user@hv001 $ sudo systemctl daemon-reload
 ```
 
 Download the newest binary from [release page of teleskop](https://github.com/lovi-cloud/teleskop/releases)
 
 ```bash
-$ ls /usr/local/bin/teleskop
+user@hv001 $ ls /usr/local/bin/teleskop
 /usr/local/bin/teleskop
 ```
 
 #### 5. Execute teleskop
 
 ```bash
-$ sudo systemctl start teleskop
+user@hv001 $ sudo systemctl start teleskop
 
-$ sudo journalctl -f -u teleskop
+user@hv001 $ sudo journalctl -f -u teleskop
 Mar 00 00:00:00 hv001 systemd[1]: Started Teleskop Agent.
 Mar 00 00:00:00 hv001 teleskop[15274]: connect to libvirtd version = 6000000
 Mar 00 00:00:00 hv001 teleskop[15274]: listening on address 0.0.0.0:80
@@ -276,7 +274,7 @@ You can call gRPC, a simple client is [here](https://github.com/lovi-cloud/satel
 e.g.)
 
 ```bash
-$ curl -L -O https://github.com/cirros-dev/cirros/releases/download/0.5.2/cirros-0.5.2-x86_64-disk.img
+user@your-workspace $ curl -L -O https://github.com/cirros-dev/cirros/releases/download/0.5.2/cirros-0.5.2-x86_64-disk.img
 ```
 
 ### Upload Image
@@ -286,7 +284,7 @@ satelit needs `Image` before creating a virtual machine.
 `client upload-image` uploads OS image from your computer.
 
 ```bash
-$ client upload-image --address 192.0.2.20:9262 --backend targetd --image ./cirros-0.5.2-x86_64-disk.img 
+user@your-workspace $ client upload-image --address 192.0.2.20:9262 --backend targetd --image ./cirros-0.5.2-x86_64-disk.img 
 UploadImage
 id:"<Image UUID>" name:"cirros-0.5.2-x86_64-disk" volume_id:"<Volume UUID>" description:"md5:<md5 hash of qcow2 file>"
 GetImages
@@ -300,7 +298,7 @@ please save `<Image UUID>` in your notepad.
 `client create-vm` create and start a virtual machine from `<Image UUID>`.
 
 ```bash
-$ client create-vm --address 192.0.2.20:9262 --backend targetd --name cirros-test --image <Image UUID> --hypervisor <hv001>
+user@your-workspace $ client create-vm --address 192.0.2.20:9262 --backend targetd --name cirros-test --image <Image UUID> --hypervisor <hv001>
 AddVirtualMachine
 StartVirtualMachine
 uuid:"<Virtual Machine UUID>" name:"cirros-test"
@@ -309,7 +307,7 @@ uuid:"<Virtual Machine UUID>" name:"cirros-test"
 You can check virtual machine status by `virsh`.
 
 ```bash
-$ sudo virsh list --all
+user@hv001 $ sudo virsh list --all
  Id   Name          State
 -----------------------------
  1    cirros-test   running

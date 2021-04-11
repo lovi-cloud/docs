@@ -77,4 +77,4 @@ satelit has more components, but they depend on only `datastore`.
 So you can use it directly in many cases.
 
 - [IPam](https://github.com/lovi-cloud/satelit/tree/3ca3ee3840712375421a3b10059b5647e217c0aa/pkg/ipam): component of management network data
-- [Scheduler](https://github.com/lovi-cloud/satelit/tree/3ca3ee3840712375421a3b10059b5647e217c0aa/pkg/scheduler): component of management resource in a hypervisor 
+- [Scheduler](https://github.com/lovi-cloud/satelit/tree/3ca3ee3840712375421a3b10059b5647e217c0aa/pkg/scheduler): component of management resource in a hypervisor
